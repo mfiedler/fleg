@@ -1,0 +1,67 @@
+-----------------------------------------------------
+This is FLEG (Fast Latex Equation Generator) (beta).
+-----------------------------------------------------
+
+
+DESCRIPTION:
+
+FLEG is a clone of LatexIt for Linux/Ubuntu written in python. 
+It generates Latex formulas in svg, pdf or png, which can be moved to other
+programs like Inkscape or LibreOffice, etc. using Drag 'n Drop.
+For the visualization FLEG uses:
+
+wxPDFViewer - Simple PDF Viewer using Python-Poppler and wxPython 
+Marcelo Fidel Fernandez - BSD License
+http://www.marcelofernandez.info - marcelo.fidel.fernandez@gmail.com
+
+
+CONTACT:
+
+Karl Christoph Gödel
+kc.goedel@gmx.de
+www.karl-goedel.de
+
+
+INSTALLATION:
+
+If you are using Ubuntu 11.10 or higher:
+
+	Run ./install.sh in a terminal.
+
+If not:
+
+	Replace the string variable
+		globalpath = '.'
+	to
+		globalpath = '/your/personal/path/to/the/script'
+	in the python script "FLEG.py".
+	If you like, you can add a starter as described here (german):
+	http://wiki.ubuntuusers.de/Unity/Unity_Startmen%C3%BC#Eigene-Starter-im-Startmenue
+
+
+DEPENDENCIES:
+
+To use FLEG, you need:
+  - Linux (until now it is tested only under Ubuntu 12.04)
+  - python 2.6/2.7
+  - sys, wxpython, os, poppler, subprocess
+  - pdflatex
+  - pdfcrop
+  - pdf2svg
+  - convert (ImageMagick)
+
+
+LICENSE:
+
+FLEG is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+FLEG is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with FLEG. If not, see <http://www.gnu.org/licenses/>.

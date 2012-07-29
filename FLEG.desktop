@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=FLEG
+GenericName=Fast Latex Equation Generator
+Comment=LaTexIt Clone
+Exec=python /usr/share/FLEG/FLEG.py
+Icon=/usr/share/FLEG/icon.png
+Terminal=flase
+Type=Application
+StartupNotify=false

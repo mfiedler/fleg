@@ -8,6 +8,7 @@ import wx.lib.wxcairo as wxcairo
 import sys
 import poppler
 import subprocess
+import inspect
 import os
 
 """
@@ -15,10 +16,11 @@ import os
     http://www.marcelofernandez.info - marcelo.fidel.fernandez@gmail.com
 """
 
-homepath = os.path.expanduser('~')
+globalpath = os.path.dirname(os.path.realpath(inspect.getfile(inspect.currentframe())))
+if globalpath == '':
+    globalpath = '.'
 
-globalpath = homepath+'/.FLEG' # <--- Write here the global path to the destination of this pythonscript
- 
+
 class PDFWindow(wx.ScrolledWindow):
     """ This example class implements a PDF Viewer Window, handling Zoom and Scrolling """
 

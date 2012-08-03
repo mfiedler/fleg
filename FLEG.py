@@ -227,7 +227,7 @@ class FLEG(wx.Frame):
         tempfile = open(globalpath+"/temp.tex",'w')
         tempfile.write(r"\documentclass{article} \begin{document} \pagestyle{empty} \[" + self.formula + r"\] \end{document}")
         tempfile.close()
-        subprocess.Popen("pdflatex --output-directory "+globalpath+" "+globalpath+"/temp.tex", shell=True)
+        subprocess.call("pdflatex --output-directory "+globalpath+" "+globalpath+"/temp.tex", shell=True)
         subprocess.call("pdfcrop "+globalpath+"/temp.pdf "+globalpath+"/temp.pdf", shell=True)
 
         if self.combobox.GetValue() == "svg":

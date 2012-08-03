@@ -225,7 +225,15 @@ class FLEG(wx.Frame):
     def GenerateFormula(self, event):
         self.formula = self.tc2.GetValue() #r"\frac{\alpha}{2}"
         tempfile = open(globalpath+"/temp.tex",'w')
-        tempfile.write(r"\documentclass{article} \begin{document} \pagestyle{empty} \[" + self.formula + r"\] \end{document}")
+        tempfile.write(r"""\documentclass{article}
+\usepackage{mathtools}
+\begin{document}
+\pagestyle{empty}
+  \[
+    """ + self.formula + r"""
+  \]
+\end{document}
+""")
         tempfile.close()
         subprocess.call("pdflatex -halt-on-error --output-directory "+globalpath+" "+globalpath+"/temp.tex", shell=True)
         subprocess.call("pdfcrop "+globalpath+"/temp.pdf "+globalpath+"/temp.pdf", shell=True)

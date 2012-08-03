@@ -198,7 +198,7 @@ class FLEG(wx.Frame):
 
 
     def LoadHistory(self):
-        histfile = open(globalpath+'/history.fleg', 'r')
+        histfile = open(globalpath+'/history.fleg', 'a+')
         self.history = histfile.readlines()
         for l in self.history:
             self.combohist.Insert(l[:-1],pos=0)

@@ -226,7 +226,6 @@ class FLEG(wx.Frame):
         self.formula = self.tc2.GetValue() #r"\frac{\alpha}{2}"
         tempfile = open(globalpath+"/temp.tex",'w')
         tempfile.write(r"""\documentclass{article}
-\usepackage{mathtools}
 \begin{document}
 \pagestyle{empty}
   \[
@@ -235,7 +234,12 @@ class FLEG(wx.Frame):
 \end{document}
 """)
         tempfile.close()
-        subprocess.call("pdflatex -halt-on-error --output-directory "+globalpath+" "+globalpath+"/temp.tex", shell=True)
+        pdflatex = subprocess.Popen("pdflatex --interaction=nonstopmode --output-directory "+globalpath+" "+globalpath+"/temp.tex", stdout=subprocess.PIPE, shell=True)
+        pdflatex_error = pdflatex.communicate()[0]
+        if pdflatex_error.find('!') != -1:
+            print pdflatex_error[pdflatex_error.find('!'):]
+            wx.MessageBox('pdflatex reported an error.\n\nPlease check the LaTeX code of your formula!', 'pdflatex - Error', wx.OK | wx.ICON_ERROR)        
+        
         subprocess.call("pdfcrop "+globalpath+"/temp.pdf "+globalpath+"/temp.pdf", shell=True)
 
         if self.combobox.GetValue() == "svg":

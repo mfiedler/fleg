@@ -126,6 +126,61 @@ class PDFWindow(wx.ScrolledWindow):
         res = dropsource.DoDragDrop(flags=wx.Drag_CopyOnly)
 
 
+class SettingsDialog(wx.Dialog):
+    
+    def __init__(self, *args, **kw):
+        super(SettingsDialog, self).__init__(*args, **kw) 
+            
+        self.InitGUI()
+        self.SetSize((250, 200))
+        self.SetTitle("Settings")     
+        self.LoadHeader()
+        
+    def InitGUI(self):
+
+        pnl = wx.Panel(self)
+        vbox = wx.BoxSizer(wx.VERTICAL)
+
+        sb = wx.StaticBox(pnl, label='Header')
+        sbs = wx.StaticBoxSizer(sb, orient=wx.VERTICAL)     
+        self.header_tc = wx.TextCtrl(pnl, style=wx.TE_MULTILINE)   
+        sbs.Add(self.header_tc, proportion=1, flag=wx.EXPAND)
+        
+        pnl.SetSizer(sbs)
+       
+        hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        SaveButton = wx.Button(self, label='Save')
+        CancelButton = wx.Button(self, label='Cancel')
+        hbox2.Add(SaveButton)
+        hbox2.Add(CancelButton, flag=wx.LEFT, border=5)
+        hbox2.Add((10,0))
+
+        vbox.Add(pnl, proportion=1, flag=wx.ALL|wx.EXPAND, border=5)
+        vbox.Add(hbox2, flag=wx.ALIGN_RIGHT|wx.TOP|wx.BOTTOM, border=10)
+
+        self.SetSizer(vbox)
+        
+        SaveButton.Bind(wx.EVT_BUTTON, self.OnSave)
+        CancelButton.Bind(wx.EVT_BUTTON, self.OnCancel)
+        
+    def OnSave(self, event):
+        self.SaveHeader()
+        self.Destroy()
+        
+    def OnCancel(self, event):
+        self.Destroy()
+    
+    def LoadHeader(self):
+        headerfile = open(globalpath+'/header.fleg', 'a+')
+        self.header_tc.SetValue(headerfile.read())
+        headerfile.close()
+		
+    def SaveHeader(self):
+        headerfile = open(globalpath+'/header.fleg', 'w')
+        headerfile.write(self.header_tc.GetValue())
+        headerfile.close()
+        
+
 class FLEG(wx.Frame):
 
     def __init__(self, parent, title):
@@ -177,10 +232,15 @@ class FLEG(wx.Frame):
         vbox.Add((-1, -60))
 
         hbox3 = wx.BoxSizer(wx.HORIZONTAL)
+        
+        img_settings = wx.Image(globalpath+"/set.png", wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        self.btn_settings = wx.BitmapButton(panel, id=-1, bitmap=img_settings, pos=(100, 0), size = (30, 30))
+        self.btn_settings.Bind(wx.EVT_BUTTON, self.ShowSettings)
+        hbox3.Add(self.btn_settings)
 
         self.combobox = wx.ComboBox(panel, -1, "svg", (100, 0), (80,30), ["pdf","png","svg"], wx.CB_READONLY)
         hbox3.Add(self.combobox)
-        hbox3.Add((160, -1))
+        hbox3.Add((130, -1))
 
         btn1 = wx.Button(panel, label='Generate', size=(100, 30))
         hbox3.Add(btn1)
@@ -195,6 +255,12 @@ class FLEG(wx.Frame):
     def SliderUpdate(self, event):
         pos = self.slider.GetValue()
         self.pdfwindow._UpdateScale(self.pdfwindow.initscale + (pos-50.0)/6.)
+        
+        
+    def ShowSettings(self, event):
+        setdiag = SettingsDialog(None)
+        setdiag.ShowModal()
+        setdiag.Destroy()
 
 
     def LoadHistory(self):
@@ -223,9 +289,11 @@ class FLEG(wx.Frame):
 
 
     def GenerateFormula(self, event):
-        self.formula = self.tc2.GetValue() #r"\frac{\alpha}{2}"
+        headerfile = open(globalpath+'/header.fleg', 'a+')
+        self.formula = self.tc2.GetValue()
         tempfile = open(globalpath+"/temp.tex",'w')
         tempfile.write(r"""\documentclass{article}
+""" + headerfile.read() + r"""
 \begin{document}
 \pagestyle{empty}
   \[
@@ -233,12 +301,13 @@ class FLEG(wx.Frame):
   \]
 \end{document}
 """)
+        headerfile.close()
         tempfile.close()
         pdflatex = subprocess.Popen("pdflatex --interaction=nonstopmode --output-directory "+globalpath+" "+globalpath+"/temp.tex", stdout=subprocess.PIPE, shell=True)
         pdflatex_error = pdflatex.communicate()[0]
         if pdflatex_error.find('!') != -1:
             print pdflatex_error[pdflatex_error.find('!'):]
-            wx.MessageBox('pdflatex reported an error.\n\nPlease check the LaTeX code of your formula!', 'pdflatex - Error', wx.OK | wx.ICON_ERROR)        
+            wx.MessageBox('pdflatex reported an error.\n\nPlease check the LaTeX code of your formula and your header!', 'pdflatex - Error', wx.OK | wx.ICON_ERROR)        
         
         subprocess.call("pdfcrop "+globalpath+"/temp.pdf "+globalpath+"/temp.pdf", shell=True)
 
